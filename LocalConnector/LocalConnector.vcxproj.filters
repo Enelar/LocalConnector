@@ -13,8 +13,42 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\queue">
+      <UniqueIdentifier>{3b45e0f2-d440-48d6-9588-99430168f815}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NewFilter1">
+      <UniqueIdentifier>{75917e3c-8780-4b96-8295-77d64bffc790}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
+    <ClInclude Include="connector.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="queue\raw_block.h">
+      <Filter>Source Files\queue</Filter>
+    </ClInclude>
+    <ClInclude Include="queue\block.h">
+      <Filter>Source Files\queue</Filter>
+    </ClInclude>
+    <ClInclude Include="queue\header.h">
+      <Filter>Source Files\queue</Filter>
+    </ClInclude>
+    <ClInclude Include="queue\shared_queue.hpp">
+      <Filter>Source Files\queue</Filter>
+    </ClInclude>
+    <ClInclude Include="queue\shared_queue.h">
+      <Filter>Source Files\queue</Filter>
+    </ClInclude>
+    <ClInclude Include="queue\filler.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="queue\header.cpp">
+      <Filter>Source Files\queue</Filter>
+    </ClCompile>
+    <ClCompile Include="queue\raw_block.cpp">
+      <Filter>Source Files\queue</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
