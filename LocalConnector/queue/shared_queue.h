@@ -25,7 +25,7 @@ namespace queue
     void Push( const T& data );
     void Push( const byte *arr, long size );
 
-    int AvailableBytes() const;
+    unsigned long AvailableBytes() const;
 
   private:
     raw_block *GetLastPlace(long size);
@@ -39,7 +39,14 @@ namespace queue
 
   struct push_fault : shared_queue_fault
   {};
+  struct overloaded : push_fault
+  {};
+
   struct pop_fault : shared_queue_fault
+  {};
+  struct not_ready : pop_fault
+  {};
+  struct empty : pop_fault
   {};
 };
 

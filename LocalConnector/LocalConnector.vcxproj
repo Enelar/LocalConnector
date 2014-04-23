@@ -18,10 +18,13 @@
     <ClInclude Include="queue\shared_queue.h" />
     <ClInclude Include="queue\raw_block.h" />
     <ClInclude Include="queue\shared_queue.hpp" />
+    <ClInclude Include="shared_memory_file\shared_memory_file.h" />
+    <ClInclude Include="shared_memory_file\shared_memory_file.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="queue\header.cpp" />
     <ClCompile Include="queue\raw_block.cpp" />
+    <ClCompile Include="shared_memory_file\shared_memory_file.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E7EBF86D-1230-45E7-89F3-E630B42C182D}</ProjectGuid>

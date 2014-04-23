@@ -68,7 +68,7 @@ namespace queue
     if (size <= 0)
       throw push_fault();
     if (size > AvailableBytes())
-      throw push_fault();
+      throw overloaded();
 
     std::unique_ptr<byte[]> arr = std::make_unique<byte[]>(sizeof(raw_block) + size);
     raw_block *ptr = reinterpret_cast<raw_block *>(arr.get());
@@ -80,18 +80,25 @@ namespace queue
       std::copy(orig, orig + size, ptr->Begin());
 
       raw_block *dest = GetLastPlace(size);
-      unsigned long block_size = size + sizeof(raw_block);
-      unsigned long first_chunk_size = std::min(block_size, h.Size() - h.First());
+
+      unsigned long data_pos = (byte *)dest->Begin() - storage;
+
+      if (data_pos > h.Size())
+        throw pop_fault();
+      data_pos = data_pos % h.Size();
+
+      unsigned long block_size = size;
+      unsigned long first_chunk_size = std::min(block_size, h.Size() - data_pos);
 
       memcpy(
-        (byte *)dest + sizeof(ptr->dirty),
-        arr.get() + sizeof(ptr->dirty),
-        first_chunk_size - sizeof(ptr->dirty)); // write all except dirty flag
+        (byte *)dest + sizeof(raw_block),
+        (byte *)ptr + sizeof(raw_block),
+        first_chunk_size); // write all except dirty flag
 
       if (first_chunk_size != block_size)
-        memcpy(storage, arr.get() + first_chunk_size, block_size - first_chunk_size);
+        memcpy(storage, (byte *)ptr + first_chunk_size, block_size - first_chunk_size);
 
-      dest->dirty = false; // close read mutex
+      memcpy((byte *)dest, (byte *)ptr, sizeof(raw_block));
     }
     catch (...)
     {
@@ -102,9 +109,12 @@ namespace queue
   }
 
   template<long size_in_bytes>
-  int shared_queue<size_in_bytes>::AvailableBytes() const
+  unsigned long shared_queue<size_in_bytes>::AvailableBytes() const
   {
-    return h.Available();
+    unsigned long ret = h.Available();
+    if (ret < sizeof(raw_block))
+      return 0;
+    return ret - sizeof(raw_block);
   }
 
   template<long size_in_bytes>
@@ -117,7 +127,7 @@ namespace queue
     do
     {
       if (size > AvailableBytes())
-        throw push_fault();
+        throw overloaded();
 
       my_last = h.last;
       res = CAS((long *)&h.last, my_last, h.last + size + sizeof(raw_block));
@@ -136,11 +146,22 @@ namespace queue
   block<filler<buf_size>> *shared_queue<size_in_bytes>::ExtractFirst()
   {
     raw_block *first = reinterpret_cast<raw_block *>(h.First() + storage);
+    if (first->dirty)
+      throw not_ready();
     if (first->size > buf_size)
       throw pop_fault();
 
     unsigned long block_size = first->size;
-    unsigned long first_chunk_size = std::min(block_size, h.Size() - h.First());
+    if (first->size > h.Size() || first->size == 0)
+      throw pop_fault();
+
+    unsigned long data_pos = (byte *)first->Begin() - storage;
+
+    if (data_pos > h.Size())
+      throw pop_fault();
+    data_pos = data_pos % h.Size();
+
+    unsigned long first_chunk_size = std::min(block_size, h.Size() - data_pos);
 
     block<filler<buf_size>> *ret = new block<filler<buf_size>>(filler<buf_size>());
     memcpy(ret->Begin(), first->Begin(), first_chunk_size);

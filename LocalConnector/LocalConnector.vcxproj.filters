@@ -16,7 +16,7 @@
     <Filter Include="Source Files\queue">
       <UniqueIdentifier>{3b45e0f2-d440-48d6-9588-99430168f815}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\NewFilter1">
+    <Filter Include="Source Files\transport">
       <UniqueIdentifier>{75917e3c-8780-4b96-8295-77d64bffc790}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -42,6 +42,12 @@
     <ClInclude Include="queue\filler.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="shared_memory_file\shared_memory_file.h">
+      <Filter>Source Files\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="shared_memory_file\shared_memory_file.hpp">
+      <Filter>Source Files\transport</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="queue\header.cpp">
@@ -49,6 +55,9 @@
     </ClCompile>
     <ClCompile Include="queue\raw_block.cpp">
       <Filter>Source Files\queue</Filter>
+    </ClCompile>
+    <ClCompile Include="shared_memory_file\shared_memory_file.cpp">
+      <Filter>Source Files\transport</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

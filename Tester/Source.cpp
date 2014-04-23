@@ -4,8 +4,10 @@ using namespace queue;
 
 void main()
 {
-  shared_queue<100> q;
+  shared_queue<12> q;
   int a = 5;
-  q.Push<int>(a);
+  q.Push(a);
   int b = q.Pop<int>();
+  q.Push(a);
+  b = q.Pop<int>();
 }

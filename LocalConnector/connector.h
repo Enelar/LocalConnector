@@ -2,7 +2,7 @@
 
 namespace tsoft
 {
-  template<typename transport, typename non_blocking_family>
+  template<typename transport, typename container>
   class connector
   {
   };
