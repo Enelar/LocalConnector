@@ -3,6 +3,11 @@
 
 using namespace tsoft;
 
+struct shared_memory_file_impl
+{
+  HANDLE file, mapped;
+};
+
 template<unsigned long minimal_size, int host>
 shared_memory_file<minimal_size, host>::~shared_memory_file()
 {
@@ -11,7 +16,9 @@ shared_memory_file<minimal_size, host>::~shared_memory_file()
 template<unsigned long minimal_size, int host>
 shared_memory_file<minimal_size, host>::shared_memory_file(const std::string &filename)
 {
-  HANDLE file =
+  head = std::make_unique<shared_memory_file_impl>();
+
+  head->file =
     CreateFile(
      filename.c_str(),
       GENERIC_READ | GENERIC_WRITE,
@@ -29,4 +36,18 @@ shared_memory_file<minimal_size, host>::shared_memory_file(const std::string &fi
       NULL
     );
 
+  if (file == INVALID_HANDLE_VALUE)
+    throw GetLastError();
+
+  head->mapped =
+    CreateFileMapping(
+      file,
+      NULL,
+      PAGE_READWRITE,
+      0,
+      0,
+      NULL);
+
+  if (mapped == NULL)
+    throw GetLastError();
 }
