@@ -17,11 +17,11 @@ void main()
   q.Push(a);
   b = q.Pop<int>();
 
-  auto *transport = new tsoft::shared_memory_file<sizeof(wished_container), true>("W:\\a.mem");
+  auto *transport = new tsoft::shared_memory_file<sizeof(wished_container), false>("W:\\a.mem");
   auto &shared = *
     tsoft::connector
     <
-    tsoft::shared_memory_file<sizeof(wished_container), true>,
+    tsoft::shared_memory_file<sizeof(wished_container), false>,
     wished_container
     >::ConstructContainer(transport, size);
 

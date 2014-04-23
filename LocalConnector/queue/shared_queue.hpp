@@ -78,7 +78,7 @@ namespace queue
       new (ptr)raw_block;
       ptr->dirty = false;
       ptr->size = size;
-      std::copy(orig, orig + size, ptr->Begin());
+      memcpy((void *)orig, (void *)ptr->Begin(), size);
 
       raw_block *dest = GetLastPlace(size);
 

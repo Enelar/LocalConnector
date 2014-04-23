@@ -29,9 +29,9 @@ namespace tsoft
 #ifndef _MAGIC_SENSE_
         filename.c_str(),
         GENERIC_READ | GENERIC_WRITE,
-        0,
+        FILE_SHARE_DELETE,
         NULL,
-        CREATE_ALWAYS,
+        host ? CREATE_ALWAYS : OPEN_EXISTING,
         FILE_ATTRIBUTE_NORMAL,
         NULL
 #else
@@ -53,16 +53,23 @@ namespace tsoft
         );
 
     if (obj.head->file == INVALID_HANDLE_VALUE)
-      throw GetLastError();
-
-    for (unsigned long i = 0; i < minimal_size;)
     {
-      int zero = 0;
-      const int chunk_size = 1000;
-      WriteFile(obj.head->file, &zero, chunk_size, NULL, NULL);
-      i += 1000;
+      int err = GetLastError();
+      throw err;
     }
-    FlushFileBuffers(obj.head->file);
+      
+
+    if (host)
+    {
+      for (unsigned long i = 0; i < minimal_size;)
+      {
+        int zero = 0;
+        const int chunk_size = 1000;
+        WriteFile(obj.head->file, &zero, chunk_size, NULL, NULL);
+        i += 1000;
+      }
+      FlushFileBuffers(obj.head->file);
+    }
 
     obj.head->mapped =
       CreateFileMapping(
