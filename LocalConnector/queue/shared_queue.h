@@ -12,6 +12,7 @@ namespace queue
   {
     typedef unsigned char byte;
 
+    bool inited = false;
     header h;
     byte storage[size_in_bytes];
 

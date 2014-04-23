@@ -23,6 +23,7 @@ namespace queue
   shared_queue<size_in_bytes>::shared_queue()
     : h(size_in_bytes)
   {
+    inited = true;
   }
 
   template<long size_in_bytes>

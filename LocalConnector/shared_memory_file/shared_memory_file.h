@@ -6,24 +6,29 @@
 namespace tsoft
 {
   struct shared_memory_file_impl;
-  template<unsigned long minimal_size, int host>
-  struct shared_memory_file
+
+  struct shared_memory_file_fictive_parent
   {
-    std::unique_ptr<shared_memory_file_impl> head;
+    typedef unsigned char byte;
+    byte *memory;
+    shared_memory_file_impl *head;
+    unsigned long size;
+  };
+
+  template<unsigned long minimal_size, int host>
+  struct shared_memory_file : shared_memory_file_fictive_parent
+  {
     shared_memory_file(const std::string &filename);
 
-    typedef unsigned char byte;
     byte *Memory() const;
     unsigned long Size() const;
 
     ~shared_memory_file();
+
+
+    friend void SystemDeinit(shared_memory_file_fictive_parent &obj, unsigned long minimal_size, int host);
+    friend void SystemInit(shared_memory_file_fictive_parent &obj, const std::string &filename, unsigned long minimal_size, int host);
   };
-
-  template<unsigned long minimal_size, int host>
-  shared_memory_file<minimal_size, host>::shared_memory_file(const std::string &filename);
-
-  template<unsigned long minimal_size, int host>
-  shared_memory_file<minimal_size, host>::~shared_memory_file();
 }
 
 #include "shared_memory_file.hpp"
