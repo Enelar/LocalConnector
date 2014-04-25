@@ -21,6 +21,7 @@
     <ClInclude Include="queue\shared_queue.hpp" />
     <ClInclude Include="shared_memory_file\shared_memory_file.h" />
     <ClInclude Include="shared_memory_file\shared_memory_file.hpp" />
+    <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="queue\header.cpp" />

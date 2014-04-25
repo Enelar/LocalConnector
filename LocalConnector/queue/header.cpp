@@ -3,7 +3,7 @@
 using namespace queue;
 
 header::header(long s)
-: size(s)
+: size(s), first(0), last(0)
 {
 
 }

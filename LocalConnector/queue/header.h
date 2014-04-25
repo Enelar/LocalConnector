@@ -6,8 +6,8 @@ namespace queue
   {
     const unsigned long size;
     unsigned long
-      first = 0,
-      last = 0;
+      first,
+      last;
 
     bool IsEmpty() const;
     unsigned long Available() const;

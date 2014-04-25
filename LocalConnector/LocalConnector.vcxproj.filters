@@ -51,6 +51,9 @@
     <ClInclude Include="connector.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="queue\header.cpp">

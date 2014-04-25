@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../stdafx.h"
+
 namespace queue
 {
   struct raw_block
@@ -25,5 +27,6 @@ namespace queue
     }
   };
 
-  static_assert(sizeof(raw_block) == 4, "Block header should be 4 bytes long");
+  //static_assert(sizeof(raw_block) == 4, "Block header should be 4 bytes long");
+  STATIC_ASSERT(sizeof(raw_block) == 4);
 }
