@@ -19,10 +19,10 @@ namespace tsoft
   template<typename... _Args>
   static connector<transport, container> *connector<transport, container>::ConstructContainer(transport *t, unsigned long required_size, _Args &&...args)
   {
-    std::unique_ptr<connector<transport, container>> ret;
+    std::auto_ptr<connector<transport, container>> ret;
     try
     {
-      ret = std::make_unique<connector<transport, container>>(t, required_size);
+      ret.reset(new connector<transport, container>(t, required_size));
       container *ptr = (ret->operator->());
 
       new (ptr)container(std::forward<_Args>(args)...);
@@ -30,7 +30,7 @@ namespace tsoft
     }
     catch (...)
     {
-      if (ret)
+      if (ret.get())
         ret->memory_to_write.release();
       throw;
     }

@@ -7,7 +7,7 @@ namespace tsoft
   template<typename transport, typename container>
   class connector
   {
-    std::unique_ptr<transport> memory_to_write;
+    std::auto_ptr<transport> memory_to_write;
 
   public:
     template<typename... _Args>
