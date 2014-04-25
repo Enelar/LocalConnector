@@ -72,6 +72,7 @@ namespace queue
   template<long size_in_bytes>
   void shared_queue<size_in_bytes>::Push(const byte *orig, long size)
   {
+    using namespace std;
     if (!orig)
       throw push_fault();
     if (size <= 0)
@@ -166,6 +167,8 @@ namespace queue
   template<int buf_size>
   block<filler<buf_size>> *shared_queue<size_in_bytes>::ExtractFirst()
   {
+    using namespace std;
+
     raw_block *first = reinterpret_cast<raw_block *>(h.First() + storage);
     if (first->dirty)
       throw not_ready();
