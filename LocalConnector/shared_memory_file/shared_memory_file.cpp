@@ -29,7 +29,9 @@ namespace tsoft
 #ifndef _MAGIC_SENSE_
         filename.c_str(),
         GENERIC_READ | GENERIC_WRITE,
-        FILE_SHARE_DELETE,
+          FILE_SHARE_READ 
+          | FILE_SHARE_WRITE
+          | FILE_SHARE_DELETE,
         NULL,
         host ? CREATE_ALWAYS : OPEN_EXISTING,
         FILE_ATTRIBUTE_NORMAL,

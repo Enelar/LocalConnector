@@ -2,11 +2,13 @@
 #include "../LocalConnector/connector.h"
 #include "../LocalConnector/shared_memory_file/shared_memory_file.h"
 
+#include <iostream>
+
 using namespace queue;
 
 void main()
 {
-  const int size = 12;
+  const int size = 200;
   typedef queue::shared_queue<size> wished_container;
 
   int a = 5, b;
@@ -25,9 +27,21 @@ void main()
     wished_container
     >::ConstructContainer(transport, size);
 
-  shared->Push(a);
-  b = shared->Pop<int>();
-  shared->Push(a);
-  b = shared->Pop<int>();
+  while (1)
+  {
+    if (shared->IsEmpty())
+      continue;
+    try
+    {
+      b = shared->Pop<int>();
+    }
+    catch (pop_fault &e)
+    {
 
+    }
+    catch (not_ready &)
+    {
+      std::cout << "Locked for writing";
+    }
+  }
 }

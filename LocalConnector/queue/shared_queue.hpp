@@ -30,6 +30,9 @@ namespace queue
   template<typename T>
   T shared_queue<size_in_bytes>::Pop()
   { // MEMLEAK HERE
+    if (IsEmpty())
+      throw pop_fault();
+
     typedef block<filler<sizeof T>> filler_block;
     typedef block<T> return_block;
     static_assert(sizeof(return_block) <= sizeof(filler_block), "TMP memory size less than minimal required");
@@ -78,7 +81,7 @@ namespace queue
       new (ptr)raw_block;
       ptr->dirty = false;
       ptr->size = size;
-      memcpy((void *)orig, (void *)ptr->Begin(), size);
+      memcpy((void *)ptr->Begin(), (void *)orig, size);
 
       raw_block *dest = GetLastPlace(size);
 
@@ -175,5 +178,11 @@ namespace queue
     h.first += first_chunk_size + sizeof(raw_block);
 
     return ret;
+  }
+
+  template<long size_in_bytes>
+  bool shared_queue<size_in_bytes>::IsEmpty() const
+  {
+    return h.IsEmpty();
   }
 }

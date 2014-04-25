@@ -27,6 +27,7 @@ namespace queue
     void Push( const byte *arr, long size );
 
     unsigned long AvailableBytes() const;
+    bool IsEmpty() const;
 
   private:
     raw_block *GetLastPlace(long size);
