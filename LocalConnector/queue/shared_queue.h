@@ -10,6 +10,7 @@ namespace queue
   template<long size_in_bytes>
   struct shared_queue
   {
+    static_assert(size_in_bytes % 4 == 0, "Shared queue should have size x multiplied 4");
     typedef unsigned char byte;
 
     bool inited = false;

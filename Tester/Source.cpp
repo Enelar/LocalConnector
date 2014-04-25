@@ -8,7 +8,7 @@ using namespace queue;
 
 void main()
 {
-  const int size = 200;
+  const int size = sizeof(int) * 1000;
   typedef queue::shared_queue<size> wished_container;
 
   int a = 5, b;
@@ -34,6 +34,7 @@ void main()
     try
     {
       b = shared->Pop<int>();
+      std::cout << "Received " << b << std::endl;
     }
     catch (pop_fault &e)
     {
@@ -41,7 +42,7 @@ void main()
     }
     catch (not_ready &)
     {
-      std::cout << "Locked for writing";
+      std::cout << "Locked for writing" << std::endl;
     }
   }
 }

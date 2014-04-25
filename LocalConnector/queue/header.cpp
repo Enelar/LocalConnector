@@ -15,9 +15,11 @@ bool header::IsEmpty() const
 
 unsigned long header::Available() const
 {
-  long available = size - (last - first);
+  unsigned long diff = last - first;
+  long available = size - diff;
   if (available < 0)
     throw "Available less than zero";
+
   return available;
 }
 

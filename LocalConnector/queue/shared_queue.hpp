@@ -32,6 +32,7 @@ namespace queue
   { // MEMLEAK HERE
     if (IsEmpty())
       throw pop_fault();
+    h.Available(); // debug
 
     typedef block<filler<sizeof T>> filler_block;
     typedef block<T> return_block;
@@ -127,15 +128,20 @@ namespace queue
     if (size <= 0)
       throw push_fault();
 
-    long my_last, res;
+    long my_last, res = h.last - 1;
     do
     {
       if (size > AvailableBytes())
         throw overloaded();
 
       my_last = h.last;
-      res = CAS((long *)&h.last, my_last, h.last + size + sizeof(raw_block));
+      unsigned long wished = my_last + size + sizeof(raw_block);
+      if (wished >= h.first + h.size)
+        continue;
+      res = CAS((long *)&h.last, my_last, wished);
     } while (res != my_last);
+
+    my_last = my_last % h.Size();
 
     raw_block *ret = reinterpret_cast<raw_block *>(storage + my_last);
 

@@ -25,6 +25,15 @@ void main()
     wished_container
     >(transport, size);
 
-  for (int i = 0; i < 1000; i++)
-    shared->Push(i);
+  for (int i = 0; i < 1E+5; i++)
+    while (true)
+      try 
+      { 
+        shared->Push(i);
+        break;
+      }
+      catch (overloaded &)
+      {
+
+      }
 }
