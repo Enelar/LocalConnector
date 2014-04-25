@@ -46,7 +46,12 @@ namespace queue
   {};
 
   struct pop_fault : shared_queue_fault
-  {};
+  {
+    pop_fault()
+    {
+
+    }
+  };
   struct not_ready : pop_fault
   {};
   struct empty : pop_fault

@@ -31,7 +31,7 @@ namespace queue
   T shared_queue<size_in_bytes>::Pop()
   { // MEMLEAK HERE
     if (IsEmpty())
-      throw pop_fault();
+      throw empty();
     h.Available(); // debug
 
     typedef block<filler<sizeof T>> filler_block;
@@ -128,6 +128,10 @@ namespace queue
     if (size <= 0)
       throw push_fault();
 
+    raw_block tmp;
+    tmp.dirty = true;
+    tmp.size = size;
+
     long my_last, res = h.last - 1;
     do
     {
@@ -138,6 +142,11 @@ namespace queue
       unsigned long wished = my_last + size + sizeof(raw_block);
       if (wished >= h.first + h.size)
         continue;
+      long 
+        *header_ptr = (long *)(storage + (my_last % h.Size())),
+        saved_header = *header_ptr;
+      if (saved_header != CAS(header_ptr, saved_header, *(long *)&tmp))
+        continue; // somebody already catched
       res = CAS((long *)&h.last, my_last, wished);
     } while (res != my_last);
 
@@ -145,9 +154,7 @@ namespace queue
 
     raw_block *ret = reinterpret_cast<raw_block *>(storage + my_last);
 
-    new (ret)raw_block;
-    ret->dirty = true; // open read mutex
-    ret->size = size;
+    new (ret)raw_block(tmp);
     return ret;
   }
 

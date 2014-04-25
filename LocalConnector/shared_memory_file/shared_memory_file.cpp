@@ -59,7 +59,6 @@ namespace tsoft
       int err = GetLastError();
       throw err;
     }
-      
 
     if (host)
     {
