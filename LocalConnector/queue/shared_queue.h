@@ -15,7 +15,7 @@ namespace queue
     //STATIC_ASSERT(size_in_bytes % 4 == 0);// , "Shared queue should have size x multiplied 4");
     typedef unsigned char byte;
 
-    bool inited = false;
+    bool inited;
     header h;
     byte storage[size_in_bytes];
 

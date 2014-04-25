@@ -64,10 +64,11 @@ namespace tsoft
     {
       for (unsigned long i = 0; i < minimal_size;)
       {
-        int zero = 0;
-        const int chunk_size = 1000;
-        WriteFile(obj.head->file, &zero, chunk_size, NULL, NULL);
-        i += 1000;
+        const DWORD chunk_size = 900;
+        DWORD chunk_sizeRet = 0;
+        byte zero[chunk_size];
+        WriteFile(obj.head->file, zero, chunk_size, &chunk_sizeRet, NULL);
+        i += chunk_sizeRet;
       }
       FlushFileBuffers(obj.head->file);
     }
