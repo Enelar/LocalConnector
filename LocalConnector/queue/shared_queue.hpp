@@ -70,7 +70,7 @@ namespace queue
   }
 
   template<long size_in_bytes>
-  void shared_queue<size_in_bytes>::Push(const byte *orig, long size)
+  void shared_queue<size_in_bytes>::Push(const byte *orig, unsigned long size)
   {
     using namespace std;
     if (!orig)
@@ -204,5 +204,46 @@ namespace queue
   bool shared_queue<size_in_bytes>::IsEmpty() const
   {
     return h.IsEmpty();
+  }
+
+  template<long size_in_bytes>
+  template<typename T>
+  bool shared_queue<size_in_bytes>::TryPop(T *& ptr)
+  {
+    if (IsEmpty())
+      return false;
+    try
+    {
+      T obj = Pop<T>();
+      ptr = new T(obj);
+    }
+    catch (pop_fault &)
+    {
+      return false;
+    }
+  }
+
+  template<long size_in_bytes>
+  template<typename T>
+  bool shared_queue<size_in_bytes>::TryPush(const T &ptr)
+  {
+    return TryPush((byte *)&ptr, sizeof(T));
+  }
+
+  template<long size_in_bytes>
+  bool shared_queue<size_in_bytes>::TryPush(const byte *arr, unsigned long size)
+  {
+    try
+    {
+      Push(arr, size);
+    }
+    catch (overloaded &)
+    {
+      return TryPush(arr, size);
+    }
+    catch (push_fault &)
+    {
+
+    }
   }
 }

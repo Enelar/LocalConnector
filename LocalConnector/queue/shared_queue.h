@@ -26,8 +26,16 @@ namespace queue
     raw_block *Pop();
 
     template<typename T>
-    void Push( const T& data );
-    void Push( const byte *arr, long size );
+    void Push(const T& data);
+    void Push(const byte *arr, unsigned long size);
+
+    template<typename T>
+    bool TryPop(T *& ptr);
+    bool TryPop(raw_block *&ptr);
+
+    template<typename T>
+    bool TryPush(const T &ptr);
+    bool TryPush(const byte *arr, unsigned long size);
 
     unsigned long AvailableBytes() const;
     bool IsEmpty() const;
