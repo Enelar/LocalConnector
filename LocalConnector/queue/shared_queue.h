@@ -41,7 +41,7 @@ namespace queue
     bool IsEmpty() const;
 
   private:
-    raw_block *GetLastPlace(long size);
+    raw_block *GetLastPlace(unsigned long size);
 
     template<int buf_size>
     block<filler<buf_size>> *ExtractFirst();

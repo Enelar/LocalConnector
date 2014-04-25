@@ -44,7 +44,7 @@ void main()
     {
 
     }
-    catch (pop_fault &e)
+    catch (pop_fault &)
     {
 
     }

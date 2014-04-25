@@ -128,7 +128,7 @@ namespace queue
   }
 
   template<long size_in_bytes>
-  raw_block *shared_queue<size_in_bytes>::GetLastPlace(long size)
+  raw_block *shared_queue<size_in_bytes>::GetLastPlace(unsigned long size)
   {
     if (size <= 0)
       throw push_fault();
