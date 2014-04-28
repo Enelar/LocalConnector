@@ -47,6 +47,7 @@ namespace queue
     block<filler<buf_size>> *ExtractFirst();
   };
 
+  typedef shared_queue<4> shared_mapped_queue;
   struct shared_queue_fault
   {};
 
