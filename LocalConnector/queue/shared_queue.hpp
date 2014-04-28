@@ -1,6 +1,6 @@
 #include "shared_queue.h"
 
-#include <memory>
+#include <vector>
 #include <algorithm>
 
 #ifdef _MSC_VER
@@ -22,6 +22,7 @@ namespace queue
   template<long size_in_bytes>
   shared_queue<size_in_bytes>::shared_queue()
     : h(size_in_bytes)
+    , inited( false )
   {
     inited = true;
   }
@@ -36,7 +37,9 @@ namespace queue
 
     typedef block<filler<sizeof T>> filler_block;
     typedef block<T> return_block;
-    static_assert(sizeof(return_block) <= sizeof(filler_block), "TMP memory size less than minimal required");
+    if (sizeof(return_block) > sizeof(filler_block))
+      throw pop_fault();
+    //static_assert(sizeof(return_block) <= sizeof(filler_block), "TMP memory size less than minimal required");
 
     filler_block *block_mem = ExtractFirst<sizeof(T)>();
     return_block *res = (return_block *)block_mem;
@@ -50,12 +53,13 @@ namespace queue
   template<typename T>
   void shared_queue<size_in_bytes>::Push(const T& data)
   {
-    std::unique_ptr<byte[]> arr = std::make_unique<byte[]>(sizeof(T));
-    T *ptr = reinterpret_cast<T *>(arr.get());
+    std::vector<byte> arr(sizeof(T));
+
+    T *ptr = reinterpret_cast<T *>(&arr[0]);
     try
     {
       new (ptr)T(data);
-      Push(arr.get(), sizeof(T));
+      Push(&arr[0], sizeof(T));
     }
     catch (...)
     {
@@ -66,8 +70,9 @@ namespace queue
   }
 
   template<long size_in_bytes>
-  void shared_queue<size_in_bytes>::Push(const byte *orig, long size)
+  void shared_queue<size_in_bytes>::Push(const byte *orig, unsigned long size)
   {
+    using namespace std;
     if (!orig)
       throw push_fault();
     if (size <= 0)
@@ -75,8 +80,8 @@ namespace queue
     if (size > AvailableBytes())
       throw overloaded();
 
-    std::unique_ptr<byte[]> arr = std::make_unique<byte[]>(sizeof(raw_block) + size);
-    raw_block *ptr = reinterpret_cast<raw_block *>(arr.get());
+    std::vector<byte> arr(sizeof(raw_block) + size);
+    raw_block *ptr = reinterpret_cast<raw_block *>(&arr[0]);
     try
     {
       new (ptr)raw_block;
@@ -93,7 +98,7 @@ namespace queue
       data_pos = data_pos % h.Size();
 
       unsigned long block_size = size;
-      unsigned long first_chunk_size = std::min(block_size, h.Size() - data_pos);
+      unsigned long first_chunk_size = min(block_size, h.Size() - data_pos);
 
       memcpy(
         (byte *)dest + sizeof(raw_block),
@@ -123,7 +128,7 @@ namespace queue
   }
 
   template<long size_in_bytes>
-  raw_block *shared_queue<size_in_bytes>::GetLastPlace(long size)
+  raw_block *shared_queue<size_in_bytes>::GetLastPlace(unsigned long size)
   {
     if (size <= 0)
       throw push_fault();
@@ -162,6 +167,8 @@ namespace queue
   template<int buf_size>
   block<filler<buf_size>> *shared_queue<size_in_bytes>::ExtractFirst()
   {
+    using namespace std;
+
     raw_block *first = reinterpret_cast<raw_block *>(h.First() + storage);
     if (first->dirty)
       throw not_ready();
@@ -178,7 +185,7 @@ namespace queue
       throw pop_fault();
     data_pos = data_pos % h.Size();
 
-    unsigned long first_chunk_size = std::min(block_size, h.Size() - data_pos);
+    unsigned long first_chunk_size = min(block_size, h.Size() - data_pos);
 
     block<filler<buf_size>> *ret = new block<filler<buf_size>>(filler<buf_size>());
     memcpy(ret->Begin(), first->Begin(), first_chunk_size);
@@ -197,5 +204,46 @@ namespace queue
   bool shared_queue<size_in_bytes>::IsEmpty() const
   {
     return h.IsEmpty();
+  }
+
+  template<long size_in_bytes>
+  template<typename T>
+  bool shared_queue<size_in_bytes>::TryPop(T *& ptr)
+  {
+    if (IsEmpty())
+      return false;
+    try
+    {
+      T obj = Pop<T>();
+      ptr = new T(obj);
+    }
+    catch (pop_fault &)
+    {
+      return false;
+    }
+  }
+
+  template<long size_in_bytes>
+  template<typename T>
+  bool shared_queue<size_in_bytes>::TryPush(const T &ptr)
+  {
+    return TryPush((byte *)&ptr, sizeof(T));
+  }
+
+  template<long size_in_bytes>
+  bool shared_queue<size_in_bytes>::TryPush(const byte *arr, unsigned long size)
+  {
+    try
+    {
+      Push(arr, size);
+    }
+    catch (overloaded &)
+    {
+      return TryPush(arr, size);
+    }
+    catch (push_fault &)
+    {
+
+    }
   }
 }

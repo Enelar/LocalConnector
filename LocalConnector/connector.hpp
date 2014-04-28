@@ -16,8 +16,7 @@ namespace tsoft
   }
 
   template<typename transport, typename container>
-  template<typename... _Args>
-  static connector<transport, container> *connector<transport, container>::ConstructContainer(transport *t, unsigned long required_size, _Args &&...args)
+  connector<transport, container> *connector<transport, container>::ConstructContainer(transport *t, unsigned long required_size)
   {
     std::auto_ptr<connector<transport, container>> ret;
     try
@@ -25,7 +24,7 @@ namespace tsoft
       ret.reset(new connector<transport, container>(t, required_size));
       container *ptr = (ret->operator->());
 
-      new (ptr)container(std::forward<_Args>(args)...);
+      new (ptr)container();
       return ret.release();
     }
     catch (...)

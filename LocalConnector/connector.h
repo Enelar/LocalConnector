@@ -10,11 +10,10 @@ namespace tsoft
     std::auto_ptr<transport> memory_to_write;
 
   public:
-    template<typename... _Args>
-    static connector *ConstructContainer(transport *, unsigned long required_size, _Args &&...);
+    static connector *ConstructContainer(transport *, unsigned long required_size = 0);
     void DestructContainer();
 
-    connector(transport *, unsigned long required_size);
+    connector(transport *, unsigned long required_size = 0);
     ~connector();
 
     container *operator->() const;
